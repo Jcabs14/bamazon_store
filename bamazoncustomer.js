@@ -55,19 +55,20 @@ function purchase() {
       }
     }]).then(function (answer) {
       //get information of choosen item
-        connection.query("SELECT product_name,stock_quantity,price FROM products WHERE ?", { item_id: answer.item }, function (err, result) {
-          if (err) throw err;
-       
-          if (result[0].stock_quantity < answer.quantity) {
-            console.log('not enough items in stock for order to go through');
-          }else{
-            var total = answer.quantity * result[0].price;
-            console.log(`you purchased ${answer.quantity} ${result[0].product_name}(s) it will cost you ${total}`);
-            connection.query('UPDATE products SET ? WHERE ?'),{stock_quantity: stock_quantity - answer.quantity},{
-              item_id: answer.item
-            }
+      connection.query("SELECT product_name,stock_quantity,price FROM products WHERE ?", { item_id: answer.item }, function (err, result) {
+        if (err) throw err;
+
+        if (result[0].stock_quantity < answer.quantity) {
+          console.log('not enough items in stock for order to go through');
+        } else {
+          var total = answer.quantity * result[0].price;
+          var minusQuantity = result[0].stock_quantity - parseInt(answer.quantity);
+          console.log(`you purchased ${answer.quantity} ${result[0].product_name}(s) it will cost you ${total}`);
+          connection.query('UPDATE products SET ? WHERE ?', [{ stock_quantity: minusQuantity }, {
+            item_id: answer.item
+          }]),
             console.log('quantities have been updated after order has gone through');
-          }
-        });
+        }
       });
+    });
 }
