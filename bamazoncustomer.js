@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
 
+//create connection
 var connection = mysql.createConnection({
   host: "localhost",
 
@@ -18,18 +19,32 @@ var connection = mysql.createConnection({
 runStore();
 
 
+//function to start the store
 function runStore() {
   connection.connect(function (err) {
     if (err) throw err;
     //list items
-    connection.query("SELECT * FROM products", function (err, result) {
+    connection.query('SELECT item_id, product_name, price, stock_quantity FROM products', function (err, result) {
       if (err) throw err;
-      console.log(result);
+      for (var i = 0; i < result.length; i++) {
+        console.log(
+          "Item id: " +
+          result[i].item_id +
+          " || Name: " +
+          result[i].product_name +
+          " || Price: " +
+          result[i].price +
+          " || Stock: " +
+          result[i].stock_quantity
+        );
+
+      }
       purchase();
     });
   });
 }
 
+//function to ask user what to purchase
 function purchase() {
   inquirer.prompt([
     {
@@ -58,6 +73,7 @@ function purchase() {
       connection.query("SELECT product_name,stock_quantity,price FROM products WHERE ?", { item_id: answer.item }, function (err, result) {
         if (err) throw err;
 
+        //check if there is enough quantity to order
         if (result[0].stock_quantity < answer.quantity) {
           console.log('not enough items in stock for order to go through');
         } else {
