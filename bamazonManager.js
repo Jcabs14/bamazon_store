@@ -43,6 +43,7 @@ function start() {
                     break;
 
                 case "Add to Inventory":
+                    addInventory();
                     break;
 
                 case "Add New Product":
@@ -69,10 +70,7 @@ function viewProducts() {
                 " || Stock: " +
                 result[i].stock_quantity
             );
-
         }
-
-
     });
 }
 
@@ -90,9 +88,44 @@ function lowInventory() {
                 " || Stock: " +
                 result[i].stock_quantity
             );
-
         }
-
-
     });
 }
+
+function addInventory() {
+    inquirer.prompt([
+        {
+            name: "item",
+            type: "input",
+            message: "What item would you like to add inventory to? (please enter the item id)",
+            validate: function (value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+                return false;
+            }
+        },
+        {
+            name: 'quantity',
+            type: 'input',
+            message: "What is the quantity you would like to add?",
+            validate: function (value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+                return false;
+            }
+        }]).then(function (answer) {
+            //get information of choosen item
+            connection.query("SELECT stock_quantity FROM products WHERE ?", { item_id: answer.item }, function (err, result) {
+                if (err) throw err;
+
+                var newTotal = parseInt(answer.quantity) + result[0].stock_quantity;
+                connection.query('UPDATE products SET ? WHERE ?', [{ stock_quantity: newTotal }, {
+                    item_id: answer.item
+                }]),
+                    console.log('quantities have been updated!');
+            });
+        });
+}
+

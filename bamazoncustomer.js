@@ -88,3 +88,7 @@ function purchase() {
       });
     });
 }
+
+function addInventory(){
+  
+}
