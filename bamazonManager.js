@@ -129,3 +129,34 @@ function addInventory() {
         });
 }
 
+function newProduct() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "What is name of the item you would like to add?"
+        },
+        {
+            name: "department",
+            type: "input",
+            message: "What is the department for product?"
+        },
+        {
+            name: "price",
+            type: "input",
+            message: "What is the price for item?"
+        },
+        {
+            name: "quantity",
+            type: "input",
+            message: "What is the quantity you would like to add?"
+        }
+    ]).then(function (answers) {
+        var name = answers.name;
+        var category = answers.category;
+        var price = answers.price;
+        var quantity = answers.quantity;
+    });
+};
+
+
